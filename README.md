@@ -43,3 +43,21 @@ minimal-repro/
 1. Add `shamefully-hoist=true` or `node-linker=hoisted` to `.npmrc` and rebuild — if this fixes it, the bug is in pnpm's symlink layout interaction with Next's SSG worker.
 2. Swap `pnpm` for `npm` and rebuild — if this fixes it, confirms the above.
 3. Downgrade to `next@13.5.6` + keep everything else — if this fixes it, regression was introduced in the Next 14 App Router runtime.
+
+## Canary verification (Next 16 + React 19)
+
+The bug also reproduces on `next@canary` (16.2.1-canary.43 at time of writing) with React 19.0.0. To verify locally:
+
+```bash
+# From this repo root
+pnpm install
+# Temporarily swap versions:
+#   app-a/package.json and app-b/package.json:   next → "canary", react/react-dom → "^19.0.0"
+#   package.json pnpm.overrides: react/react-dom → "19.0.0"
+# Then:
+rm -rf node_modules **/node_modules pnpm-lock.yaml
+pnpm install
+pnpm --filter app-a build
+```
+
+Expected: same `TypeError: Cannot read properties of null (reading 'useContext')` crash, just in a different compiled chunk path (`.next/server/chunks/ssr/[root-of-the-server]__*.js`). Confirmed 2026-04-15.
