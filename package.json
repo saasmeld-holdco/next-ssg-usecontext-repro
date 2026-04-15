@@ -1,0 +1,18 @@
+{
+  "name": "next-ssg-usecontext-repro",
+  "private": true,
+  "scripts": {
+    "build:a": "pnpm --filter app-a build",
+    "build:b": "pnpm --filter app-b build",
+    "build:all": "pnpm -r build"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "18.2.0",
+      "react-dom": "18.2.0"
+    }
+  }
+}
